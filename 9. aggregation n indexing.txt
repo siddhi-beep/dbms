@@ -377,6 +377,7 @@ WriteResult({ "nInserted" : 1 })
     }
 
 // USING MINIMUM INDEX:
+//db.student.find().min({Rollno:4}).hint({Rollno:1})
 > db.student.find().min({Rollno:4});
 { "_id" : ObjectId("541c0e05a8dc3dd4fa9f859e"), "Rollno" : 4, "name" : "snehal", "subject" : "TOC", "marks" : 81 }
 { "_id" : ObjectId("541c0e05a8dc3dd4fa9f859f"), "Rollno" : 5, "name" : "saurabh", "subject" : "TOC", "marks" : 78 }
@@ -534,6 +535,7 @@ WriteResult({ "nInserted" : 1 })
 //DROP INDEX:
 > db.student.dropIndex({Rollno:1});
 { "nIndexesWas" : 4, "ok" : 1 }
+
 
 
 
