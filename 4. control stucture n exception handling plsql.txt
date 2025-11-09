@@ -1,0 +1,49 @@
+create table borrower(
+    rollno number(38) not null, 
+    name varchar2(20), 
+    dateofissue date,
+    namebook varchar2(20), 
+    status varchar2(20)
+);
+
+create table fine(
+    rollno number(38), 
+    dateofreturn date,
+    amt number(38)
+);
+
+insert into borrower values (1,'shyam',to_date('20250721','yyyymmdd'),'cns','i');
+insert into borrower values (2,'ram',to_date('20250706','yyyymmdd'),'cns','i');
+insert into borrower values (3,'sneha',to_date('20250511','yyyymmdd'),'dbms','i');
+insert into borrower values (4,'geeta',to_date('20250621','yyyymmdd'),'spm','i');
+insert into borrower values (5,'smeeta',to_date('20250418','yyyymmdd'),'spm','i');
+insert into borrower values (6,'john',to_date('20250508','yyyymmdd'),'spm','i');
+
+create or replace procedure book(r in number)
+as 
+    c number;
+begin
+    select to_number(trunc(sysdate-dateofissue)) into c
+    from borrower
+    where rollno=r;
+
+    if c>=15 and c<=30 then
+        c:=c-15;
+        insert into fine values(r,sysdate,'');
+        update fine set amt=c*5 where rollno=r;
+    elsif c>30 then 
+        c:=c-30;
+        insert into fine values (r,sysdate,'');
+        update fine set amt=(c*50)+75 where rollno=r;
+    end if;
+
+    update borrower set status='r'
+    where rollno=r;
+
+exception
+    when no_data_found then
+        dbms_output.put_line('no such rollno');
+end;
+/
+execute book(6);
+select * from fine;

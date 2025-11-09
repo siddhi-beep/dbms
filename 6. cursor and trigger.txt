@@ -1,0 +1,62 @@
+create table info (rollno number(38),name varchar2(20),
+branch varchar2(20));
+create table info1 (rollno number(38),name varchar2(20),
+branch varchar2(20));
+
+insert into info values (1,'ram','cs'),(2,'tom','ele'),(3,'soham','cs');
+insert into info1 values(5,'teena','mech'),(6,'meena','it'),(2,'tom','ele');
+select * from info;
+select * from info1;
+declare
+rn info.rollno%type;
+nm info.name%type;
+br info.branch%type;
+
+cursor cinfo is
+select * from info minus
+select * from info1;
+
+begin
+open cinfo;
+
+loop
+fetch cinfo into rn,nm,br;
+exit 
+when cinfo%notfound;
+
+insert into info1 values(rn,nm,br);
+end loop;
+close cinfo;
+end;
+/
+select * from info;
+select * from info1;
+
+
+create table lib (rollno number(38), name varchar2(20),bookn varchar2(20));
+create table lib_audit(rollno number(38),name varchar2(20),bookn varchar2(20));
+insert into lib values
+(1,'soham','cns'),(2,'rani','dbms'),(3,'neeta','cns');
+
+select * from lib;
+select * from lib_audit;
+
+create or replace trigger tr 
+after delete or update on lib
+referencing old as o new as n
+for each row
+
+begin
+insert into lib_audit values(:o.rollno,:o.name,:o.bookn);
+end;
+/
+
+update lib set bookn='cpp' 
+where bookn='cns';
+
+delete from lib
+where rollno=2;
+
+select * from lib_audit;
+select * from lib;
+

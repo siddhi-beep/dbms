@@ -1,0 +1,75 @@
+create table department(
+depid int primary key,deptname varchar(50),location varchar(50));
+
+create table employee(
+empid int primary key, empname varchar(50), job varchar(50),depid int,
+salary int,managerid int,
+foreign key(depid) references department(depid)
+);
+
+create table performance(
+perid int primary key,empid int,
+rating int check(rating between 1 and 10), year int,
+foreign key(empid) references employee(empid));
+
+insert into department
+values (1,'HR','pune'),(2,'IT','mumbai'),(3,'finance','nashik');
+
+insert into employee
+values (101,'amit','manager',3,80000,NULL),(102,'soham','hr',3,55000,101),
+(103,'seema','manager',3,90000,NULL),(104,'arohi','developer',2,400000,NULL),
+(105,'meeta','tester',2,60000,101);
+
+insert into performance
+values (1,101,9,2023),(2,102,8,2023),(3,103,6,2023),(4,104,9,2023),
+(5,105,5,2023);
+
+select e.empid,e.empname,e.job,d.deptname,d.location
+from department d
+inner join employee e 
+on e.depid=d.depid;
+
+select  d.deptname,e.empname
+from department d
+left join employee e on d.depid=e.depid;
+
+select e.empname,d.deptname
+from employee e
+right join department d on e.depid=d.depid;
+
+select e.empname as employee,m.empname as manager
+from employee e 
+join employee m on e.managerid=m.empid;
+
+select empname,salary
+from employee
+where salary>(select avg(salary) from employee);
+
+select empname from employee
+where empid in(
+select empid from performance
+where rating>(select avg(rating) from performance));
+
+select d.deptname,sum(e.salary) as totalsalary
+from employee e 
+join department d on e.depid=d.depid
+group by deptname;
+
+create view emp as
+select e.empname,p.rating
+from performance p
+join employee e on p.empid=e.empid 
+where p.rating>=8;
+select * from emp;
+
+select empname, depid,salary
+from employee e 
+where salary=(
+select max(salary)
+from employee
+where depid=e.depid);
+
+select empname,job,salary
+from employee
+order by salary desc
+limit 3;

@@ -1,0 +1,43 @@
+create table student(stuid int primary key, name varchar(50) not null,dep varchar(50),
+year int check(year between 1 and 4));
+
+create table book(bid int primary key,title varchar(50),author varchar(50),
+price int check(price>0),availability varchar(30) default 'yes');
+
+create table transaction (tranid int primary key ,stuid int,bid int, issuedate date not null, returndate date,
+status varchar(30) check (status in ('issued','returned')),
+foreign key(stuid) references student(stuid), foreign key(bid) references book(bid));
+
+create view issuedbook as
+select s.stuid as studentid, s.name as studentname,b.title as title,t.issuedate , t.status
+from transaction t
+join student s on t.stuid=s.stuid
+join book b on t.bid=b.bid
+where t.status='issued';
+
+create index ind on book(title);
+
+create sequence seq
+start with 103
+increment by 1
+nocache;
+
+create synonym bo for book;
+
+insert into student values(1,'amit','comp',3);
+insert into student values(2,'om','comp',4);
+insert into student values(4,'rahul','comp',1);
+
+insert into book values(10,'cns','john',550,'yes');
+
+insert into book values(16,'cpp','ron',550,'yes');
+
+insert into bo values(18,'ppp','john',550,'yes');
+
+insert into transaction(tranid,stuid,bid,issuedate,status)
+values(seq.nextval,1,16,sysdate,'issued');
+insert into transaction(tranid,stuid,bid,issuedate,status)
+values(seq.nextval,4,16,sysdate,'issued');
+select * from issuedbook;
+
+--oracle sql

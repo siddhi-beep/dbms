@@ -1,0 +1,70 @@
+create table student(
+studid int primary key,name varchar(50) NOT NULL,
+DEP varchar(50),year int);
+
+create table marks(
+markid int primary key, studid int, subject varchar(50),
+marksobtained int check(marksobtained between 0 and 100),
+foreign key(studid) references student(studid));
+
+create table result(
+resultid int primary key, studid int,totalmarks int,
+percentage decimal(5,2),grade char(2),
+foreign key(studid) references student(studid));
+
+insert into student
+values(1,'jhon','cs',3),
+(2,'sneha','elec',2),
+(3,'ram','cs',3);
+
+insert into marks values
+(101,1,'dbms',50),(102,1,'cns',86),
+(103,2,'dbms',90),(104,2,'cns',86),
+(105,3,'dbms',79),(106,3,'cns',50);
+
+select * from student;
+
+update student
+set DEP='computer' where DEP='cs';
+select * from student;
+
+delete from marks
+where studid=3;
+select * from marks;
+
+
+select studid,subject, marksobtained
+from marks 
+where marksobtained>70;
+
+select studid,
+sum(marksobtained) as totalmarks,
+avg(marksobtained) as averagemarks 
+from marks group by studid;
+
+select studid,subject,marksobtained,
+(marksobtained+(marksobtained*0.05)) as markswithgrace
+from marks;
+
+select * from marks 
+where marksobtained>=70 and marksobtained<=90;
+
+select studid,upper(name) as uppercasename, length(name) as namelength
+from student;
+
+select studid from marks where subject='dbms'
+union
+select studid from marks where subject='cns';
+
+insert into result(resultid, studid ,totalmarks ,
+percentage ,grade )
+select row_number() over() as resultid,studid,
+sum(marksobtained) as totalmarks,
+avg(marksobtained) as percentage,
+case
+    when avg(marksobtained)>=70 then 'A'
+    when avg(marksobtained)>=60 then 'B'
+    else 'c'
+end as grade
+from marks group by studid;
+select * from result;

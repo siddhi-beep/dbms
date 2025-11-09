@@ -1,0 +1,55 @@
+create table student(rollno number(38) ,
+name varchar2(30) not null,totalm number(38));
+create table result(rollno number(38),name varchar2(20),
+class varchar2(20));
+
+insert into student values
+(13, 'arav',990),(15,'rani',900),(8,'mohit',999);
+
+insert into result values
+(13,'arav',''),(15,'rani',''),(8,'mohit','');
+select * from student;
+select * from result;
+
+create or replace procedure test ( r in number)
+as
+t student.totalm%type;
+
+begin
+select s.totalm into t 
+from student s 
+where s.rollno=r;
+
+if t<=1500 and t>=990 then
+update result set class='distinction'
+where rollno=r;
+dbms_output.put_line('distinction');
+
+elsif t<=989 and t>=900 then
+update result set class='first class'
+where rollno=r;
+dbms_output.put_line('first class');
+
+elsif t<=899 and t>=825 then
+update result set class='second class'
+where rollno=r;
+dbms_output.put_line('second class');
+
+else
+update result set class='pass'
+where rollno=r;
+
+end if;
+
+exception 
+when no_data_found then
+dbms_output.put_line('no such rollno');
+
+end;
+/
+
+execute test(13);
+execute test(15);
+execute test(3);
+execute test(8);
+select * from result;
